@@ -90,8 +90,8 @@ class _TodoListScreenState extends State<TodoListScreen> {
 
     // Использовать коллекцию для хранения объектов класса 'Square'.
     var squaresMap = Map<String, Square>();
-    squaresMap['first'] = Square.fromWidth(4);
-    squaresMap['second'] = Square.fromWidth(3);
+    squaresMap['first'] = Square.fromWidth(4.0);
+    squaresMap['second'] = Square.fromWidth(3.0);
 
     // Демонстрация использования множества для хранения уникальных значений.
     var unique = Set<String>();
@@ -100,16 +100,16 @@ class _TodoListScreenState extends State<TodoListScreen> {
     unique.add('a');
 
     // длина должна быть 2 т.к. удалили неуникальные
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Unique Count'),
-          content: Text(unique.length.toString()),
-          actions: [],
-        );
-      },
-    );
+    // showDialog(
+    //   context: context,
+    //   builder: (BuildContext context) {
+    //     return AlertDialog(
+    //       title: Text('Unique Count'),
+    //       content: Text(unique.length.toString()),
+    //       actions: [],
+    //     );
+    //   },
+    // );
   
     // демонстрация обработки ошибок
     list[0].brokenMehod();
