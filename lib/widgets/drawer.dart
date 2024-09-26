@@ -31,7 +31,7 @@ class MyDrawer extends StatelessWidget {
               },
             ),
             ListTile(
-              title: const Text("Лаба 3"),
+              title: const Text("Лаба 3, 6"),
               onTap: () {
                 Navigator.push(
                     context,
