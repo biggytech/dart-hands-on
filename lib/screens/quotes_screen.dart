@@ -1,23 +1,22 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:todo_list/models/random_user_model.dart';
+import 'package:todo_list/models/quote_model.dart';
 import 'package:todo_list/widgets/drawer.dart';
 import 'package:http/http.dart' as http;
 
-class RandomScreen extends StatefulWidget {
+class QuotesScreen extends StatefulWidget {
   @override
   _RandomScreenState createState() => _RandomScreenState();
 }
 
-class _RandomScreenState extends State<RandomScreen> {
+class _RandomScreenState extends State<QuotesScreen> {
   /**
-   * Используя бесплатное API для получения пользователей,
-   * реализуйте асинхронный метод 'fetchUser' для получения случайного пользователя
+   * Используя бесплатное API для получения цитат (https://api.quotable.io/random),
+   * реализуйте асинхронный метод 'fetchQuote' для получения случайной цитаты.
    */
   Future<http.Response> fetchUser() {
-    // TODO: flutter pub add http
-    return http.get(Uri.parse('https://randomuser.me/api/'));
+    return http.get(Uri.parse('https://johndturn-quotableapiproxy.web.val.run/'));
   }
 
   Future<void> showRandomUser() async {
@@ -25,22 +24,23 @@ class _RandomScreenState extends State<RandomScreen> {
       final response = await fetchUser();
 
       if (response.statusCode == 200) {
-        var user = RandomUser.fromJson(
-          jsonDecode(
-            response.body?.results?.toList()[0]
-          ) as Map<String, dynamic>
+        var quote = Quote.fromJson(
+          (jsonDecode(
+            response.body
+          ) as List<dynamic>)[0] ?? {}
         );
 
         showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Случайный пользователь'),
+              title: Text('Случайная цитата'),
               content: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text("Пол: " + user.gender),
-                  Text("Имя: " + user.firstName),
-                  Text("Фамилия: " + user.lastName),
+                  Text("Автор: " + quote.author),
+                  Text("Цитата: " + quote.content),
+                  Text("Теги: " + quote.tags.join(", ")),
                 ],
               ),
               actions: [],
@@ -58,7 +58,7 @@ class _RandomScreenState extends State<RandomScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Ошибка парсинга'),
+            title: Text(e.toString()),
             actions: [],
           );
         },
@@ -77,7 +77,7 @@ class _RandomScreenState extends State<RandomScreen> {
         child: OutlinedButton(onPressed: () {
           showRandomUser();
         }, child: Text(
-          "Получить случайного пользователя"
+          "Получить случайную цитату"
         )),
       ),drawer: MyDrawer(),
     );

@@ -1,7 +1,5 @@
 // импорт для константы PI
 import 'dart:math' as math;
-// для stdout
-import 'dart:io';
 
 // интерфейс
 abstract class PerimeterCalculation {
@@ -69,6 +67,7 @@ abstract class Shape with PrintDetailsMixin {
       // просто деление не упадет с ошибкой
       // будет просто бесконечность в ответе
       print(1 ~/ 0);
+    // ignore: unused_catch_clause
     } on IntegerDivisionByZeroException catch(e) {
       print("Division by 0");
     } catch (e) {
