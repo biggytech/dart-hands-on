@@ -12,58 +12,54 @@ abstract class PerimeterCalculation {
 
 // миксин
 mixin PrintDetailsMixin {
-  void printDetails() {
+  String getDetails() {
+    String result = "";
+
     if (this is Square) {
       var square = this as Square;
-      stdout.write("Width:");
-      stdout.write(square.width);
-      print('');
-      stdout.write("Area:");
-      stdout.write(square.calculateArea());
-      print('');
-      stdout.write("Perimeter:");
-      stdout.write(square.calculatePerimeter());
+      result += "Ширина:";
+      result += square.width.toString();
+      result += ", Площадь:";
+      result += square.calculateArea().toString();
+      result += ", Периметр:";
+      result += square.calculatePerimeter().toString();
     } else if (this is Rectangle) {
       var rectangle = this as Rectangle;
-      stdout.write("Width:");
-      stdout.write(rectangle.getWidth);
-      print('');
-      stdout.write("Height:");
-      stdout.write(rectangle.getHeight);
-      print('');
-      stdout.write("Area:");
-      stdout.write(rectangle.calculateArea());
+      result += "Ширина:";
+      result += rectangle.getWidth.toString();
+      result += ", Высота:";
+      result += rectangle.getHeight.toString();
+      result += ", Площадь:";
+      result += rectangle.calculateArea().toString();
     } else if (this is Circle) {
       var circle = this as Circle;
-      stdout.write("Radius:");
-      stdout.write(circle.radius);
-      print('');
-      stdout.write("Area:");
-      stdout.write(circle.calculateArea());
+      result += "Радиус:";
+      result += circle.radius.toString();
+      result += ", Площадь:";
+      result += double.parse(circle.calculateArea().toStringAsFixed(5)).toString();
     } else if (this is Cube) {
       var cube = this as Cube;
-      stdout.write("Width:");
-      stdout.write(cube.width);
-      print('');
-      stdout.write("Volume:");
-      stdout.write(cube.calculateVolume());
+      result += "Ширина:";
+      result += cube.width.toString();
+      result += ", Объем:";
+      result += cube.calculateVolume().toString();
     } else if (this is Sphere) {
       var sphere = this as Sphere;
-      stdout.write("Radius:");
-      stdout.write(sphere.radius);
-      print('');
-      stdout.write("Volume:");
-      stdout.write(sphere.calculateVolume());
+      result += "Радиус:";
+      result += sphere.radius.toString();
+      result += ", Объем:";
+      result += sphere.calculateVolume().toString();
     }
 
-    print('');
+    return result;
   }
 }
 
 // 2D ФИГУРЫ
-abstract class Shape {
+abstract class Shape with PrintDetailsMixin {
   // нет тела метода - значит абстрактный
   double calculateArea();
+  String getTitle();
 
   // метод для демонстрации
   // обработки исключений
@@ -82,7 +78,7 @@ abstract class Shape {
 }
 
 // квадрат
-class Square extends Shape with PrintDetailsMixin implements PerimeterCalculation {
+class Square extends Shape implements PerimeterCalculation {
   final double width;
 
   // конструктор с именованными параметрами
@@ -100,6 +96,11 @@ class Square extends Shape with PrintDetailsMixin implements PerimeterCalculatio
   }
 
   @override
+  String getTitle() {
+    return "Square";
+  }
+
+  @override
   double calculateArea() {
     return width * width;
   }
@@ -111,7 +112,7 @@ class Square extends Shape with PrintDetailsMixin implements PerimeterCalculatio
 }
 
 // прямоугольник
-class Rectangle extends Shape with PrintDetailsMixin {
+class Rectangle extends Shape {
   double width;
   double height;
 
@@ -135,13 +136,18 @@ class Rectangle extends Shape with PrintDetailsMixin {
   set setHeight(double h) => height = h;
 
   @override
+  String getTitle() {
+    return "Rectangle";
+  }
+
+  @override
   double calculateArea() {
     return width * height;
   }
 }
 
 // круг
-class Circle extends Shape with PrintDetailsMixin {
+class Circle extends Shape {
   final double radius;
   // статическое поле
   static double pi = math.pi;
@@ -157,13 +163,18 @@ class Circle extends Shape with PrintDetailsMixin {
   }
 
   @override
+  String getTitle() {
+    return "Circle";
+  }
+
+  @override
   double calculateArea() {
     return Circle.pi * radius * radius;
   }
 }
 
 // 3D ФИГУРЫ
-abstract class Shape3D {
+abstract class Shape3D with PrintDetailsMixin {
   double calculateVolume();
 
   // функции с различными типами параметров для Shape3D
@@ -178,7 +189,7 @@ abstract class Shape3D {
   }
 }
 
-class Cube extends Shape3D with PrintDetailsMixin {
+class Cube extends Shape3D {
   final double width;
 
   Cube({required this.width}) {
@@ -193,7 +204,7 @@ class Cube extends Shape3D with PrintDetailsMixin {
   }
 }
 
-class Sphere extends Shape3D with PrintDetailsMixin {
+class Sphere extends Shape3D {
   final double radius;
 
   Sphere({required this.radius}) {
