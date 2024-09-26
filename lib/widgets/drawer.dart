@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_list/screens/geometry_screen.dart';
+import 'package:todo_list/screens/random_screen.dart';
 import 'package:todo_list/screens/todo_list_screen.dart';
 
 class MyDrawer extends StatelessWidget {
@@ -27,7 +28,16 @@ class MyDrawer extends StatelessWidget {
                     MaterialPageRoute(
                         builder: (context) => new GeometryScreen()));
               },
-            )
+            ),
+            ListTile(
+              title: const Text("Лаба 3"),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => new RandomScreen()));
+              },
+            ),
           ],
         ),
       );
