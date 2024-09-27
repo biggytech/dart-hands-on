@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_list/bloc/notes_bloc.dart';
+import 'package:todo_list/bloc/notes_events.dart';
+import 'package:todo_list/bloc/notes_state.dart';
 import 'package:todo_list/models/note_model.dart';
 import 'package:todo_list/widgets/drawer.dart';
 
 class EditNoteScreen extends StatefulWidget {
-  final Note note;
+  final int index;
 
-  EditNoteScreen({super.key, required this.note});
+  EditNoteScreen({super.key,required this.index});
 
   @override
-  _EditNoteScreenState createState() =>
-      _EditNoteScreenState(title: note.title, content: note.content);
+  _EditNoteScreenState createState() => _EditNoteScreenState(index: this.index);
 }
 
 class _EditNoteScreenState extends State<EditNoteScreen> {
-  String title = "";
-  String content = "";
+  final int index;
 
-  _EditNoteScreenState({required this.title, required this.content});
+  _EditNoteScreenState({required this.index});
 
   void showError(String msg) {
     showDialog(
@@ -31,55 +33,79 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Редактировать заметку'),
-        actions: [],
-      ),
-      body: Center(
-        child: Column(
-          children: [
-            Text("Заголовок:"),
-            TextFormField(
-              onChanged: (value) {
-                title = value;
-              },
-              decoration: InputDecoration(
-                  hintText: "Заголовок", contentPadding: EdgeInsets.all(20)),
-              initialValue: this.title,
-            ),
-            SizedBox(height: 20),
-            Text("Содержание:"),
-            TextFormField(
-              maxLines: 10,
-              onChanged: (value) {
-                content = value;
-              },
-              decoration: InputDecoration(
-                  hintText: "Содержание", contentPadding: EdgeInsets.all(20)),
-              initialValue: this.content,
-            ),
-            SizedBox(height: 20),
-            OutlinedButton(
-                onPressed: () {
-                  if (title.length == 0) {
-                    showError("Заполните название");
-                    return;
-                  }
+    final NotesBloc notesBloc = BlocProvider.of<NotesBloc>(context);
 
-                  if (content.length == 0) {
-                    showError("Заполните содержание");
-                    return;
-                  }
+    return BlocBuilder<NotesBloc, NoteState>(
+      builder: (context, state) {
+        return Scaffold(
+          appBar: AppBar(
+            title: Text('Редактировать заметку'),
+            actions: [],
+          ),
+          body: Center(
+            child: Column(
+              children: [
+                Text("Заголовок:"),
+                TextFormField(
+                  onChanged: (value) {
+                    final event = ChangeTitleEvent(title: value);
+                    notesBloc.add(event);
+                  },
+                  decoration: InputDecoration(
+                      hintText: "Заголовок",
+                      contentPadding: EdgeInsets.all(20)),
+                  initialValue: state.title,
+                ),
+                SizedBox(height: 20),
+                Text("Содержание:"),
+                TextFormField(
+                  maxLines: 10,
+                  onChanged: (value) {
+                    final event = ChangeContentEvent(content: value);
+                    notesBloc.add(event);
+                  },
+                  decoration: InputDecoration(
+                      hintText: "Содержание",
+                      contentPadding: EdgeInsets.all(20)),
+                  initialValue: state.content,
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                    onPressed: () {
+                      if (state.title.length == 0) {
+                        showError("Заполните название");
+                        return;
+                      }
 
-                  var changedNote = Note(title: title, content: content);
-                  Navigator.pop(context, changedNote);
-                },
-                child: Text("Изменить"))
-          ],
-        ),
-      ),
-      drawer: MyDrawer(),
+                      if (state.content.length == 0) {
+                        showError("Заполните содержание");
+                        return;
+                      }
+
+                      var changedNote =
+                          Note(title: state.title, content: state.content);
+                      final event =
+                          UpdateEvent(note: changedNote, index: this.index);
+                      notesBloc.add(event);
+                      Navigator.pop(context);
+                    },
+                    child: Text("Изменить")),
+                OutlinedButton(
+                    onPressed: () {
+                      final NotesBloc notesBloc =
+                          BlocProvider.of<NotesBloc>(context);
+                      final event = DeleteEvent(index: this.index);
+                      notesBloc.add(event);
+
+                      Navigator.pop(context);
+                    },
+                    child: Text("Удалить"))
+              ],
+            ),
+          ),
+          drawer: MyDrawer(),
+        );
+      },
     );
   }
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:todo_list/models/note_model.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:todo_list/bloc/notes_bloc.dart';
+import 'package:todo_list/bloc/notes_events.dart';
+import 'package:todo_list/bloc/notes_state.dart';
 import 'package:todo_list/screens/notes/add_note_screen.dart';
 import 'package:todo_list/widgets/drawer.dart';
 import 'package:todo_list/widgets/note_tile.dart';
@@ -10,25 +13,22 @@ class NotesScreen extends StatefulWidget {
 }
 
 class _NotesScreenState extends State<NotesScreen> {
-  List<Note> notes = <Note>[];
+  void navigateToAddNoteScreen(BuildContext context) {
+    final NotesBloc notesBloc = BlocProvider.of<NotesBloc>(context);
 
-  Future<void> navigateToAddNoteScreen(BuildContext context) async {
-    final createdNote = await Navigator.push(
+    final event1 = ChangeTitleEvent(title: "");
+    notesBloc.add(event1);
+    final event2 = ChangeContentEvent(content: "");
+    notesBloc.add(event2);
+
+    Navigator.push(
         context, MaterialPageRoute(builder: (context) => new AddNoteScreen()));
-
-    setState(() {
-      notes.add(createdNote);
-    });
-  }
-
-  void updateNote(int index, Note note) {
-    setState(() {
-      notes[index] = note;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final NotesBloc notesBloc = BlocProvider.of<NotesBloc>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Заметки'),
@@ -41,19 +41,24 @@ class _NotesScreenState extends State<NotesScreen> {
               icon: Icon(Icons.add)),
         ],
       ),
-      body: notes.isEmpty
-          ? Center(
-              child: Text('Нет заметок'),
-            )
-          : GridView.count(
-              crossAxisCount: 2,
-              childAspectRatio: 8/9,
-              children: List.generate(notes.length, (index) {
-                return NoteTile(note: notes[index], onUpdateCallback: (Note note) {
-                  updateNote(index, note);
-                },);
-              }),
-            ),
+      body: BlocBuilder<NotesBloc, NoteState>(
+        builder: (context, state) {
+          return state.notes.isEmpty
+              ? Center(
+                  child: Text('Нет заметок'),
+                )
+              : GridView.count(
+                  crossAxisCount: 2,
+                  childAspectRatio: 8 / 9,
+                  children: List.generate(state.notes.length, (index) {
+                    return NoteTile(
+                      note: state.notes[index],
+                      index: index,
+                    );
+                  }),
+                );
+        },
+      ),
       drawer: MyDrawer(),
     );
   }
