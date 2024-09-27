@@ -83,7 +83,7 @@ class _EditNoteScreenState extends State<EditNoteScreen> {
                       }
 
                       var changedNote =
-                          Note(title: state.title, content: state.content);
+                          Note(title: state.title, content: state.content, id: state.id);
                       final event =
                           UpdateEvent(note: changedNote, index: this.index);
                       notesBloc.add(event);

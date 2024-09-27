@@ -7,6 +7,12 @@ import 'package:todo_list/models/note_model.dart';
 
 abstract class NoteEvent {}
 
+class InitializeEvent extends NoteEvent {
+  final List<Note> notes;
+
+  InitializeEvent({ required this.notes});
+}
+
 class LoadEvent extends NoteEvent {
   final int index;
 

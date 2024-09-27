@@ -1,7 +1,7 @@
 import 'package:todo_list/models/note_model.dart';
 
 /**
- * В файле состояния (State) определите абстрактный класс состояний NoteState
+ * В файле состояния (State) определите класс состояний NoteState
  * и дочерние классы состояния,
  * такие как LoadState, AddState, UpdateState и DeleteState,
  * которые будут представлять состояния при выполнении соответствующих событий.
@@ -10,10 +10,15 @@ import 'package:todo_list/models/note_model.dart';
 class NoteState {
   String title = "";
   String content = "";
+  String id = "-1";
 
   List<Note> notes;
 
   NoteState({required this.notes});
+
+  void updateId(String id) {
+    this.id = id;
+  }
 
   void updateTitle(String title) {
     this.title = title;
